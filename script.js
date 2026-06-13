@@ -8,7 +8,7 @@ const questions = [
   },
   {
     category: "Anatomy & Physiology",
-    question: "Which body system is primarily responsible for transporting oxygen, nutrients, and hormones through the blood?",
+    question: "Which body system transports oxygen, nutrients, and hormones through the blood?",
     choices: ["Respiratory system", "Digestive system", "Circulatory system", "Integumentary system"],
     answer: 2,
     explanation: "The circulatory system moves blood through the heart and blood vessels."
@@ -65,7 +65,7 @@ const questions = [
   {
     category: "Anatomy & Physiology",
     question: "The kidneys help maintain homeostasis mainly by:",
-    choices: ["Producing bile", "Filtering blood and regulating water balance", "Pumping blood", "Making red blood cells only"],
+    choices: ["Producing bile", "Filtering blood and regulating water balance", "Pumping blood", "Digesting proteins"],
     answer: 1,
     explanation: "Kidneys filter wastes from blood and help regulate fluid and electrolyte balance."
   },
@@ -363,4 +363,109 @@ let answered = false;
 function showQuestion() {
   const current = questions[currentIndex];
   selectedChoice = null;
-  answered =
+  answered = false;
+
+  document.getElementById("progress").textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+  document.getElementById("score").textContent = `Score: ${score}`;
+  document.getElementById("category").textContent = current.category;
+  document.getElementById("status").textContent = "Choose one answer";
+  document.getElementById("question").textContent = current.question;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("explanation").textContent = "";
+
+  const choicesBox = document.getElementById("choices");
+  choicesBox.innerHTML = "";
+
+  current.choices.forEach(function(choice, index) {
+    const button = document.createElement("button");
+    button.className = "choice";
+    button.textContent = choice;
+    button.onclick = function() {
+      chooseAnswer(index, button);
+    };
+    choicesBox.appendChild(button);
+  });
+}
+
+function chooseAnswer(index, button) {
+  if (answered) return;
+
+  selectedChoice = index;
+
+  const buttons = document.querySelectorAll(".choice");
+  buttons.forEach(function(btn) {
+    btn.classList.remove("selected");
+  });
+
+  button.classList.add("selected");
+}
+
+function checkAnswer() {
+  if (answered) return;
+
+  if (selectedChoice === null) {
+    document.getElementById("feedback").textContent = "Choose an answer first.";
+    return;
+  }
+
+  const current = questions[currentIndex];
+  const buttons = document.querySelectorAll(".choice");
+  answered = true;
+
+  if (selectedChoice === current.answer) {
+    score++;
+    buttons[selectedChoice].classList.add("correct");
+    document.getElementById("feedback").textContent = "Correct!";
+    document.getElementById("status").textContent = "Correct";
+  } else {
+    buttons[selectedChoice].classList.add("wrong");
+    buttons[current.answer].classList.add("correct");
+    document.getElementById("feedback").textContent = "Not quite.";
+    document.getElementById("status").textContent = "Review the explanation";
+  }
+
+  document.getElementById("score").textContent = `Score: ${score}`;
+  document.getElementById("explanation").textContent = current.explanation;
+}
+
+function nextQuestion() {
+  if (currentIndex < questions.length - 1) {
+    currentIndex++;
+    showQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  const percent = Math.round((score / questions.length) * 100);
+
+  document.getElementById("progress").textContent = "Quiz complete";
+  document.getElementById("score").textContent = `Final Score: ${score}/${questions.length}`;
+  document.getElementById("category").textContent = "Results";
+  document.getElementById("status").textContent = `${percent}%`;
+  document.getElementById("question").textContent = `You scored ${score} out of ${questions.length}.`;
+
+  document.getElementById("choices").innerHTML = "";
+
+  if (percent >= 80) {
+    document.getElementById("feedback").textContent = "Strong work.";
+  } else if (percent >= 60) {
+    document.getElementById("feedback").textContent = "Good practice. Review the explanations you missed.";
+  } else {
+    document.getElementById("feedback").textContent = "Keep practicing. Science gets better with repetition.";
+  }
+
+  document.getElementById("explanation").textContent =
+    "Restart the quiz to try again. These are original TEAS-style practice questions.";
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  selectedChoice = null;
+  score = 0;
+  answered = false;
+  showQuestion();
+}
+
+showQuestion();
