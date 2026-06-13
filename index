@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TEAS Science Mock Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">TEAS Science Practice</p>
+        <h1>Science Mock Quiz</h1>
+        <p class="subtitle">50 original multiple-choice questions with instant feedback.</p>
+      </div>
+      <div class="score-card">
+        <span id="progress">Question 1 of 50</span>
+        <strong id="score">Score: 0</strong>
+      </div>
+    </header>
+
+    <section class="quiz-panel">
+      <div class="question-meta">
+        <span id="category">Science</span>
+        <span id="status">Choose one answer</span>
+      </div>
+
+      <h2 id="question">Loading question...</h2>
+
+      <div id="choices" class="choices"></div>
+
+      <div class="actions">
+        <button onclick="checkAnswer()">Check Answer</button>
+        <button onclick="nextQuestion()">Next Question</button>
+        <button onclick="restartQuiz()">Restart</button>
+      </div>
+
+      <p id="feedback"></p>
+      <p id="explanation"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
