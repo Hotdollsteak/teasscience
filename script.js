@@ -53,38 +53,35 @@ function showQuestion() {
     const button = document.createElement("button");
     button.className = "choice";
     button.textContent = choice;
+
     button.onclick = function() {
-      chooseAnswer(index);
+      if (answered) return;
+
+      answered = true;
+      const buttons = document.querySelectorAll(".choice");
+
+      if (index === q[3]) {
+        score++;
+        button.classList.add("correct");
+        document.getElementById("feedback").textContent = "Correct!";
+        document.getElementById("status").textContent = "Correct";
+      } else {
+        button.classList.add("wrong");
+        buttons[q[3]].classList.add("correct");
+        document.getElementById("feedback").textContent = "Not quite.";
+        document.getElementById("status").textContent = "Review";
+      }
+
+      buttons.forEach(function(btn) {
+        btn.disabled = true;
+      });
+
+      document.getElementById("score").textContent = "Score: " + score;
+      document.getElementById("explanation").textContent = q[4];
     };
+
     choicesBox.appendChild(button);
   });
-}
-
-function chooseAnswer(index) {
-  if (answered) return;
-
-  const q = questions[currentIndex];
-  const buttons = document.querySelectorAll(".choice");
-  answered = true;
-
-  if (index === q[3]) {
-    score++;
-    buttons[index].classList.add("correct");
-    document.getElementById("feedback").textContent = "Correct!";
-    document.getElementById("status").textContent = "Correct";
-  } else {
-    buttons[index].classList.add("wrong");
-    buttons[q[3]].classList.add("correct");
-    document.getElementById("feedback").textContent = "Not quite.";
-    document.getElementById("status").textContent = "Review";
-  }
-
-  buttons.forEach(function(button) {
-    button.disabled = true;
-  });
-
-  document.getElementById("score").textContent = "Score: " + score;
-  document.getElementById("explanation").textContent = q[4];
 }
 
 function checkAnswer() {
@@ -114,7 +111,15 @@ function showResults() {
   document.getElementById("status").textContent = percent + "%";
   document.getElementById("question").textContent = "You scored " + score + " out of " + questions.length + ".";
   document.getElementById("choices").innerHTML = "";
-  document.getElementById("feedback").textContent = percent >= 80 ? "Strong work." : "Keep practicing.";
+
+  if (percent >= 80) {
+    document.getElementById("feedback").textContent = "Strong work.";
+  } else if (percent >= 60) {
+    document.getElementById("feedback").textContent = "Good practice. Keep reviewing.";
+  } else {
+    document.getElementById("feedback").textContent = "Keep practicing. You are building the skill.";
+  }
+
   document.getElementById("explanation").textContent = "Restart the quiz to try again.";
 }
 
